@@ -1,65 +1,109 @@
-import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-md p-8">
+        {/* 헤더 */}
+        <div className="text-center mb-8">
+          <p className="text-sm text-amber-700 font-semibold tracking-widest mb-2">
+            해운대순복음교회
+          </p>
+          <h1 className="text-2xl font-bold text-gray-900" style={{ wordBreak: "keep-all" }}>
+            항존직 선거 공고문
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-sm text-gray-500 mt-1">
+            장로 · 안수집사 · 권사
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* 공고 내용 */}
+        <div className="space-y-5 text-sm text-gray-700">
+          <div className="flex gap-3">
+            <span className="font-bold text-amber-700 whitespace-nowrap">1.</span>
+            <div>
+              <span className="font-semibold">투표 일시</span>
+              <p className="mt-0.5">2026년 04월 12일 (주일)</p>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <span className="font-bold text-amber-700 whitespace-nowrap">2.</span>
+            <div>
+              <span className="font-semibold">투표 장소</span>
+              <p className="mt-0.5">해운대순복음교회 본당</p>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <span className="font-bold text-amber-700 whitespace-nowrap">3.</span>
+            <div>
+              <span className="font-semibold">항존직 입후보 자격요건</span>
+              <p className="mt-0.5 text-gray-500">별지 참조</p>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <span className="font-bold text-amber-700 whitespace-nowrap">4.</span>
+            <div>
+              <span className="font-semibold">입후보 등록기간</span>
+              <p className="mt-0.5 font-semibold text-amber-800">2026년 3월 15일 ~ 3월 29일</p>
+              <ul className="mt-1 space-y-0.5 text-gray-600" style={{ wordBreak: "keep-all" }}>
+                <li>· 신청인: 본인 및 배우자</li>
+                <li>· 구비서류: 입후보자 지원 신청서, 자기점검표</li>
+                <li>· 제출처: 사무실 (또는 아래 온라인 접수)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <span className="font-bold text-amber-700 whitespace-nowrap">5.</span>
+            <div>
+              <span className="font-semibold">입후보자 선출</span>
+              <p className="mt-0.5">전형위원회 (목회협력위)</p>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <span className="font-bold text-amber-700 whitespace-nowrap">6.</span>
+            <div>
+              <span className="font-semibold">투표</span>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <span className="font-bold text-amber-700 whitespace-nowrap">7.</span>
+            <div>
+              <span className="font-semibold">선거 결과 공고</span>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+
+        {/* 구분선 */}
+        <div className="my-6 border-t border-gray-100" />
+
+        <p className="text-center text-sm text-gray-500 mb-6">
+          해운대순복음교회 선거관리위원회
+        </p>
+
+        {/* 지원 버튼 */}
+        <Link
+          href="/apply"
+          className="block w-full text-center bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 rounded-xl transition-colors"
+        >
+          온라인 후보 지원하기
+        </Link>
+
+        <p className="text-xs text-center text-gray-400 mt-3" style={{ wordBreak: "keep-all" }}>
+          지원 신청서와 자기점검표를 온라인으로 작성하고 제출합니다.
+        </p>
+      </div>
+
+      <div className="mt-4">
+        <Link href="/admin" className="text-xs text-gray-400 hover:text-gray-600 underline">
+          관리자 페이지
+        </Link>
+      </div>
+    </main>
   );
 }
