@@ -5,7 +5,8 @@ import { supabase } from "@/lib/supabase";
 import { SCORE_BREAKDOWN } from "@/lib/scoring";
 import { SERVICE_TYPES, SERVICE_YEARS } from "@/lib/types";
 import type { ServiceRecords, ServiceType } from "@/lib/types";
-import { printCandidatePDF } from "@/lib/printPDF";
+import { printCandidatePDF, printCandidateListPDF } from "@/lib/printPDF";
+import type { PrintCandidate } from "@/lib/printPDF";
 
 const ADMIN_PASSWORD = "20261900";
 
@@ -71,14 +72,65 @@ const STATUS_COLORS: Record<string, string> = {
   rejected: "bg-red-100 text-red-700",
 };
 
+function toRawPrintData(c: RawCandidate): PrintCandidate & { status: string } {
+  return {
+    name: c.name,
+    position: c.position,
+    birthDate: c.birth_date,
+    churchRegisterDate: c.church_register_date,
+    baptismDate: c.baptism_date,
+    baptismChurch: c.baptism_church,
+    officiantPastor: c.officiant_pastor,
+    ordinationDate: c.ordination_date,
+    ordinationChurch: c.ordination_church,
+    phone: c.phone,
+    email: c.email,
+    address: c.address,
+    familyMembers: c.family_members,
+    careerHistory: c.career_history,
+    worshipSundayMain: c.worship_sunday_main,
+    worshipSundayDay: c.worship_sunday_day,
+    worshipWednesday: c.worship_wednesday,
+    worshipFriday: c.worship_friday,
+    worshipMission: c.worship_mission,
+    dawnPrayerWeekly: c.dawn_prayer_weekly,
+    tithe: c.tithe,
+    evangelismCount: c.evangelism_count,
+    q1SundayWorship: c.q1_sunday_worship,
+    q2EveningWorship: c.q2_evening_worship,
+    q2EveningWorshipReason: c.q2_evening_worship_reason,
+    q3WednesdayPrayer: c.q3_wednesday_prayer,
+    q3WednesdayPrayerReason: c.q3_wednesday_prayer_reason,
+    q4FridayPrayer: c.q4_friday_prayer,
+    q4FridayPrayerReason: c.q4_friday_prayer_reason,
+    q5DawnPrayer: c.q5_dawn_prayer,
+    q5DawnPrayerReason: c.q5_dawn_prayer_reason,
+    q6SpecialMeeting: c.q6_special_meeting,
+    q7SpiritBaptism: c.q7_spirit_baptism,
+    q7SpiritEvidence: c.q7_spirit_evidence,
+    q8AlcoholResolved: c.q8_alcohol_resolved,
+    q9Tithe: c.q9_tithe,
+    q10Thanksgiving: c.q10_thanksgiving,
+    q11SeasonalOffering: c.q11_seasonal_offering,
+    q12FamilyFaith: c.q12_family_faith,
+    q13MinistryCooperation: c.q13_ministry_cooperation,
+    serviceRecords: c.service_records,
+    checklistScore: c.checklist_score,
+    submittedAt: c.created_at,
+    status: c.status,
+  };
+}
+
 function DetailModal({
   candidate,
   onClose,
   onStatusChange,
+  onDelete,
 }: {
   candidate: RawCandidate;
   onClose: () => void;
   onStatusChange: (id: string, status: string) => void;
+  onDelete: (id: string) => void;
 }) {
   const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
     <div className="mb-5">
@@ -139,53 +191,7 @@ function DetailModal({
               {STATUS_LABELS[candidate.status]}
             </span>
             <button
-              onClick={() =>
-                printCandidatePDF({
-                  name: candidate.name,
-                  position: candidate.position,
-                  birthDate: candidate.birth_date,
-                  churchRegisterDate: candidate.church_register_date,
-                  baptismDate: candidate.baptism_date,
-                  baptismChurch: candidate.baptism_church,
-                  officiantPastor: candidate.officiant_pastor,
-                  ordinationDate: candidate.ordination_date,
-                  ordinationChurch: candidate.ordination_church,
-                  phone: candidate.phone,
-                  email: candidate.email,
-                  address: candidate.address,
-                  familyMembers: candidate.family_members,
-                  careerHistory: candidate.career_history,
-                  worshipSundayMain: candidate.worship_sunday_main,
-                  worshipSundayDay: candidate.worship_sunday_day,
-                  worshipWednesday: candidate.worship_wednesday,
-                  worshipFriday: candidate.worship_friday,
-                  worshipMission: candidate.worship_mission,
-                  dawnPrayerWeekly: candidate.dawn_prayer_weekly,
-                  tithe: candidate.tithe,
-                  evangelismCount: candidate.evangelism_count,
-                  q1SundayWorship: candidate.q1_sunday_worship,
-                  q2EveningWorship: candidate.q2_evening_worship,
-                  q2EveningWorshipReason: candidate.q2_evening_worship_reason,
-                  q3WednesdayPrayer: candidate.q3_wednesday_prayer,
-                  q3WednesdayPrayerReason: candidate.q3_wednesday_prayer_reason,
-                  q4FridayPrayer: candidate.q4_friday_prayer,
-                  q4FridayPrayerReason: candidate.q4_friday_prayer_reason,
-                  q5DawnPrayer: candidate.q5_dawn_prayer,
-                  q5DawnPrayerReason: candidate.q5_dawn_prayer_reason,
-                  q6SpecialMeeting: candidate.q6_special_meeting,
-                  q7SpiritBaptism: candidate.q7_spirit_baptism,
-                  q7SpiritEvidence: candidate.q7_spirit_evidence,
-                  q8AlcoholResolved: candidate.q8_alcohol_resolved,
-                  q9Tithe: candidate.q9_tithe,
-                  q10Thanksgiving: candidate.q10_thanksgiving,
-                  q11SeasonalOffering: candidate.q11_seasonal_offering,
-                  q12FamilyFaith: candidate.q12_family_faith,
-                  q13MinistryCooperation: candidate.q13_ministry_cooperation,
-                  serviceRecords: candidate.service_records,
-                  checklistScore: candidate.checklist_score,
-                  submittedAt: candidate.created_at,
-                })
-              }
+              onClick={() => printCandidatePDF(toRawPrintData(candidate))}
               className="text-xs text-amber-600 border border-amber-300 px-2.5 py-1 rounded-lg hover:bg-amber-50 transition-colors"
             >
               PDF 저장
@@ -326,7 +332,7 @@ function DetailModal({
           {/* 상태 변경 */}
           <div className="border-t border-gray-100 pt-4">
             <p className="text-xs font-semibold text-gray-500 mb-2">상태 변경</p>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               {Object.entries(STATUS_LABELS).map(([status, label]) => (
                 <button
                   key={status}
@@ -341,6 +347,20 @@ function DetailModal({
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* 삭제 */}
+          <div className="border-t border-gray-100 pt-4 mt-4">
+            <button
+              onClick={() => {
+                if (confirm(`"${candidate.name}" 지원서를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) {
+                  onDelete(candidate.id);
+                }
+              }}
+              className="w-full py-2 rounded-lg text-xs font-medium text-red-500 border border-red-200 hover:bg-red-50 transition-colors"
+            >
+              지원서 삭제
+            </button>
           </div>
         </div>
       </div>
@@ -386,6 +406,18 @@ export default function AdminPage() {
       prev.map((c) => (c.id === id ? { ...c, status } : c))
     );
     if (selected?.id === id) setSelected((prev) => prev ? { ...prev, status } : null);
+  };
+
+  const handleDelete = async (id: string) => {
+    await supabase.from("election_candidates").delete().eq("id", id);
+    setCandidates((prev) => prev.filter((c) => c.id !== id));
+    setSelected(null);
+  };
+
+  const handleListPDF = (pos: string) => {
+    const list = pos === "all" ? candidates : candidates.filter((c) => c.position === pos);
+    const title = pos === "all" ? "전체" : pos;
+    printCandidateListPDF(list.map(toRawPrintData), title);
   };
 
   if (!authed) {
@@ -461,21 +493,39 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* 필터 */}
-        <div className="flex gap-2 mb-4">
-          {positions.map((pos) => (
-            <button
-              key={pos}
-              onClick={() => setFilter(pos)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                filter === pos
-                  ? "bg-amber-600 text-white"
-                  : "bg-white border border-gray-200 text-gray-600 hover:border-amber-300"
-              }`}
-            >
-              {pos === "all" ? "전체" : pos}
-            </button>
-          ))}
+        {/* 필터 + PDF 다운로드 */}
+        <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
+          <div className="flex gap-2">
+            {positions.map((pos) => (
+              <button
+                key={pos}
+                onClick={() => setFilter(pos)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  filter === pos
+                    ? "bg-amber-600 text-white"
+                    : "bg-white border border-gray-200 text-gray-600 hover:border-amber-300"
+                }`}
+              >
+                {pos === "all" ? "전체" : pos}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-1.5">
+            {[
+              { pos: "all", label: "전체" },
+              { pos: "장로", label: "장로" },
+              { pos: "안수집사", label: "안수집사" },
+              { pos: "권사", label: "권사" },
+            ].map(({ pos, label }) => (
+              <button
+                key={pos}
+                onClick={() => handleListPDF(pos)}
+                className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors whitespace-nowrap"
+              >
+                {label} PDF
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* 목록 */}
@@ -520,6 +570,7 @@ export default function AdminPage() {
           candidate={selected}
           onClose={() => setSelected(null)}
           onStatusChange={handleStatusChange}
+          onDelete={handleDelete}
         />
       )}
     </main>

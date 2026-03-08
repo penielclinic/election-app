@@ -262,3 +262,101 @@ export function printCandidatePDF(data: PrintCandidate): void {
   win.document.write(html);
   win.document.close();
 }
+
+const STATUS_LABELS: Record<string, string> = {
+  submitted: "접수됨",
+  reviewed: "검토중",
+  approved: "승인",
+  rejected: "반려",
+};
+
+export type PrintCandidateWithStatus = PrintCandidate & { status?: string };
+
+export function printCandidateListPDF(candidates: PrintCandidateWithStatus[], title: string): void {
+  const rows = candidates
+    .map(
+      (c, i) => `
+    <tr>
+      <td style="text-align:center">${i + 1}</td>
+      <td><strong>${esc(c.name)}</strong></td>
+      <td style="text-align:center">${esc(c.position)}</td>
+      <td>${esc(c.phone)}</td>
+      <td>${esc(c.email)}</td>
+      <td style="text-align:center;font-weight:bold;color:#b45309">${c.checklistScore ?? "-"}</td>
+      <td style="text-align:center">${c.status ? (STATUS_LABELS[c.status] ?? c.status) : "-"}</td>
+      <td style="text-align:center">${c.submittedAt ? new Date(c.submittedAt).toLocaleDateString("ko-KR") : "-"}</td>
+    </tr>`
+    )
+    .join("");
+
+  const html = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>항존직 후보 목록 - ${esc(title)}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Malgun Gothic', '맑은 고딕', AppleGothic, sans-serif;
+      font-size: 10pt;
+      color: #111;
+      background: #fff;
+      padding: 15mm 18mm;
+    }
+    h1 { font-size: 15pt; text-align: center; letter-spacing: 2px; margin-bottom: 4px; }
+    .subtitle { font-size: 9pt; color: #777; text-align: center; margin-bottom: 16px; }
+    .badge {
+      display: inline-block;
+      background: #fdf3e0; color: #b45309;
+      border: 1px solid #b45309;
+      border-radius: 4px; padding: 2px 10px;
+      font-size: 10pt; font-weight: bold;
+      margin-bottom: 14px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+    th {
+      background: #f5f2ea; padding: 6px 8px;
+      border: 0.5px solid #ccc; font-size: 9pt;
+      text-align: center;
+    }
+    td { padding: 5px 8px; border: 0.5px solid #e0e0e0; }
+    tr:nth-child(even) td { background: #fafafa; }
+    .footer { font-size: 8pt; color: #aaa; text-align: right; margin-top: 12px; }
+    @media print {
+      body { padding: 10mm 14mm; }
+      @page { margin: 8mm; size: A4 landscape; }
+    }
+  </style>
+</head>
+<body>
+  <h1>항존직 후보 지원자 목록</h1>
+  <p class="subtitle">해운대순복음교회 선거관리위원회</p>
+  <div style="text-align:center"><span class="badge">${esc(title)} &nbsp;총 ${candidates.length}명</span></div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:36px">번호</th>
+        <th>성명</th>
+        <th style="width:70px">직분</th>
+        <th>휴대폰</th>
+        <th>이메일</th>
+        <th style="width:60px">점수</th>
+        <th style="width:60px">상태</th>
+        <th style="width:80px">접수일</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <p class="footer">출력일: ${new Date().toLocaleString("ko-KR")}</p>
+  <script>window.onload = function() { window.print(); }</script>
+</body>
+</html>`;
+
+  const win = window.open("", "_blank", "width=1100,height=800");
+  if (!win) {
+    alert("팝업이 차단되었습니다. 팝업 허용 후 다시 시도해 주세요.");
+    return;
+  }
+  win.document.write(html);
+  win.document.close();
+}
