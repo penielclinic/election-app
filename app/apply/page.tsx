@@ -12,6 +12,7 @@ import type {
   WorshipGrade,
 } from "@/lib/types";
 import { SERVICE_TYPES, SERVICE_YEARS } from "@/lib/types";
+import { printCandidatePDF } from "@/lib/printPDF";
 
 const TOTAL_STEPS = 5;
 
@@ -1193,7 +1194,58 @@ export default function ApplyPage() {
             {form.name}님의 항존직 후보 지원서가 정상적으로 접수되었습니다.
           </p>
           <p className="text-2xl font-bold text-amber-600 mb-6">자기점검표 총점: {score}점</p>
-          <a href="/" className="block bg-amber-600 text-white py-3 rounded-xl font-semibold hover:bg-amber-700 transition-colors">
+          <button
+            onClick={() =>
+              printCandidatePDF({
+                name: form.name,
+                position: form.position,
+                birthDate: form.birthDate,
+                churchRegisterDate: form.churchRegisterDate,
+                baptismDate: form.baptismDate,
+                baptismChurch: form.baptismChurch,
+                officiantPastor: form.officiantPastor,
+                ordinationDate: form.ordinationDate,
+                ordinationChurch: form.ordinationChurch,
+                phone: form.phone,
+                email: form.email,
+                address: form.address,
+                familyMembers: form.familyMembers,
+                careerHistory: form.careerHistory,
+                worshipSundayMain: form.worshipSundayMain,
+                worshipSundayDay: form.worshipSundayDay,
+                worshipWednesday: form.worshipWednesday,
+                worshipFriday: form.worshipFriday,
+                worshipMission: form.worshipMission,
+                dawnPrayerWeekly: form.dawnPrayerWeekly,
+                tithe: form.tithe,
+                evangelismCount: form.evangelismCount,
+                q1SundayWorship: form.q1SundayWorship,
+                q2EveningWorship: form.q2EveningWorship,
+                q2EveningWorshipReason: form.q2EveningWorshipReason,
+                q3WednesdayPrayer: form.q3WednesdayPrayer,
+                q3WednesdayPrayerReason: form.q3WednesdayPrayerReason,
+                q4FridayPrayer: form.q4FridayPrayer,
+                q4FridayPrayerReason: form.q4FridayPrayerReason,
+                q5DawnPrayer: form.q5DawnPrayer,
+                q5DawnPrayerReason: form.q5DawnPrayerReason,
+                q6SpecialMeeting: form.q6SpecialMeeting,
+                q7SpiritBaptism: form.q7SpiritBaptism,
+                q7SpiritEvidence: form.q7SpiritEvidence,
+                q8AlcoholResolved: form.q8AlcoholResolved,
+                q9Tithe: form.q9Tithe,
+                q10Thanksgiving: form.q10Thanksgiving,
+                q11SeasonalOffering: form.q11SeasonalOffering,
+                q12FamilyFaith: form.q12FamilyFaith,
+                q13MinistryCooperation: form.q13MinistryCooperation,
+                serviceRecords: form.serviceRecords,
+                checklistScore: score,
+              })
+            }
+            className="w-full mb-3 py-3 rounded-xl border border-amber-500 text-amber-700 font-semibold hover:bg-amber-50 transition-colors"
+          >
+            지원서 PDF 저장
+          </button>
+          <a href="/" className="block w-full text-center bg-amber-600 text-white py-3 rounded-xl font-semibold hover:bg-amber-700 transition-colors">
             처음으로 돌아가기
           </a>
         </div>

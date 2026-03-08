@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { SCORE_BREAKDOWN } from "@/lib/scoring";
 import { SERVICE_TYPES, SERVICE_YEARS } from "@/lib/types";
 import type { ServiceRecords, ServiceType } from "@/lib/types";
+import { printCandidatePDF } from "@/lib/printPDF";
 
 const ADMIN_PASSWORD = "20261900";
 
@@ -137,6 +138,58 @@ function DetailModal({
             <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_COLORS[candidate.status]}`}>
               {STATUS_LABELS[candidate.status]}
             </span>
+            <button
+              onClick={() =>
+                printCandidatePDF({
+                  name: candidate.name,
+                  position: candidate.position,
+                  birthDate: candidate.birth_date,
+                  churchRegisterDate: candidate.church_register_date,
+                  baptismDate: candidate.baptism_date,
+                  baptismChurch: candidate.baptism_church,
+                  officiantPastor: candidate.officiant_pastor,
+                  ordinationDate: candidate.ordination_date,
+                  ordinationChurch: candidate.ordination_church,
+                  phone: candidate.phone,
+                  email: candidate.email,
+                  address: candidate.address,
+                  familyMembers: candidate.family_members,
+                  careerHistory: candidate.career_history,
+                  worshipSundayMain: candidate.worship_sunday_main,
+                  worshipSundayDay: candidate.worship_sunday_day,
+                  worshipWednesday: candidate.worship_wednesday,
+                  worshipFriday: candidate.worship_friday,
+                  worshipMission: candidate.worship_mission,
+                  dawnPrayerWeekly: candidate.dawn_prayer_weekly,
+                  tithe: candidate.tithe,
+                  evangelismCount: candidate.evangelism_count,
+                  q1SundayWorship: candidate.q1_sunday_worship,
+                  q2EveningWorship: candidate.q2_evening_worship,
+                  q2EveningWorshipReason: candidate.q2_evening_worship_reason,
+                  q3WednesdayPrayer: candidate.q3_wednesday_prayer,
+                  q3WednesdayPrayerReason: candidate.q3_wednesday_prayer_reason,
+                  q4FridayPrayer: candidate.q4_friday_prayer,
+                  q4FridayPrayerReason: candidate.q4_friday_prayer_reason,
+                  q5DawnPrayer: candidate.q5_dawn_prayer,
+                  q5DawnPrayerReason: candidate.q5_dawn_prayer_reason,
+                  q6SpecialMeeting: candidate.q6_special_meeting,
+                  q7SpiritBaptism: candidate.q7_spirit_baptism,
+                  q7SpiritEvidence: candidate.q7_spirit_evidence,
+                  q8AlcoholResolved: candidate.q8_alcohol_resolved,
+                  q9Tithe: candidate.q9_tithe,
+                  q10Thanksgiving: candidate.q10_thanksgiving,
+                  q11SeasonalOffering: candidate.q11_seasonal_offering,
+                  q12FamilyFaith: candidate.q12_family_faith,
+                  q13MinistryCooperation: candidate.q13_ministry_cooperation,
+                  serviceRecords: candidate.service_records,
+                  checklistScore: candidate.checklist_score,
+                  submittedAt: candidate.created_at,
+                })
+              }
+              className="text-xs text-amber-600 border border-amber-300 px-2.5 py-1 rounded-lg hover:bg-amber-50 transition-colors"
+            >
+              PDF 저장
+            </button>
             <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">
               ×
             </button>
