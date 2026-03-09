@@ -392,6 +392,8 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<RawCandidate | null>(null);
   const [filter, setFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<"date" | "score" | "name">("date");
+  const [sortAsc, setSortAsc] = useState(false);
 
   const login = () => {
     if (pw === ADMIN_PASSWORD) {
@@ -468,13 +470,20 @@ export default function AdminPage() {
   }
 
   const positions = ["all", "장로", "안수집사", "권사"];
-  const filtered =
-    filter === "all" ? candidates : candidates.filter((c) => c.position === filter);
+  const filtered = (filter === "all" ? candidates : candidates.filter((c) => c.position === filter))
+    .slice()
+    .sort((a, b) => {
+      let v = 0;
+      if (sortBy === "date") v = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      else if (sortBy === "score") v = (a.checklist_score ?? 0) - (b.checklist_score ?? 0);
+      else if (sortBy === "name") v = a.name.localeCompare(b.name, "ko");
+      return sortAsc ? v : -v;
+    });
 
-  const avgScore =
-    candidates.length > 0
-      ? Math.round(candidates.reduce((s, c) => s + (c.checklist_score || 0), 0) / candidates.length)
-      : 0;
+  const toggleSort = (key: "date" | "score" | "name") => {
+    if (sortBy === key) setSortAsc((v) => !v);
+    else { setSortBy(key); setSortAsc(key === "name"); }
+  };
 
   return (
     <main className="min-h-screen bg-gray-50 p-4">
@@ -542,6 +551,31 @@ export default function AdminPage() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* 정렬 */}
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-xs text-gray-400">정렬:</span>
+          {([
+            { key: "date", label: "신청일" },
+            { key: "score", label: "점수" },
+            { key: "name", label: "이름" },
+          ] as const).map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => toggleSort(key)}
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors flex items-center gap-1 ${
+                sortBy === key
+                  ? "bg-gray-700 text-white"
+                  : "bg-white border border-gray-200 text-gray-600 hover:border-gray-400"
+              }`}
+            >
+              {label}
+              {sortBy === key && (
+                <span className="text-xs">{sortAsc ? "↑" : "↓"}</span>
+              )}
+            </button>
+          ))}
         </div>
 
         {/* 목록 */}
