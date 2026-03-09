@@ -12,6 +12,7 @@ import type {
   WorshipGrade,
 } from "@/lib/types";
 import { SERVICE_TYPES, SERVICE_YEARS } from "@/lib/types";
+import { printCandidatePDF } from "@/lib/printPDF";
 
 const TOTAL_STEPS = 5;
 
@@ -119,19 +120,64 @@ function StepIndicator({ step }: { step: number }) {
 function Step1({
   form,
   onChange,
+  photoPreview,
+  onPhotoChange,
 }: {
   form: CandidateForm;
   onChange: (f: Partial<CandidateForm>) => void;
+  photoPreview: string;
+  onPhotoChange: (file: File) => void;
 }) {
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-bold text-gray-800 mb-4">기본 정보</h2>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            성명 <span className="text-red-500">*</span>
+      {/* 사진 + 성명/직분 나란히 */}
+      <div className="flex gap-4 items-start">
+        {/* 증명사진 박스 */}
+        <div className="shrink-0">
+          <label className="block text-xs font-medium text-gray-600 mb-1 text-center">증명사진</label>
+          <label
+            htmlFor="photo-input"
+            className="block w-24 h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 cursor-pointer hover:border-amber-400 transition-colors"
+          >
+            {photoPreview ? (
+              <img src={photoPreview} alt="증명사진" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-1">
+                <span className="text-2xl text-gray-300">+</span>
+                <span className="text-xs text-gray-400">사진 첨부</span>
+                <span className="text-xs text-gray-300">3×4cm</span>
+              </div>
+            )}
           </label>
+          <input
+            id="photo-input"
+            type="file"
+            accept="image/jpeg,image/jpg,image/png"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) onPhotoChange(file);
+            }}
+          />
+          {photoPreview && (
+            <button
+              type="button"
+              onClick={() => onPhotoChange(new File([], ""))}
+              className="w-full mt-1 text-xs text-gray-400 hover:text-red-400"
+            >
+              삭제
+            </button>
+          )}
+        </div>
+
+        {/* 성명 + 직분 */}
+        <div className="flex-1 space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              성명 <span className="text-red-500">*</span>
+            </label>
           <input
             type="text"
             value={form.name}
@@ -139,30 +185,32 @@ function Step1({
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
             placeholder="홍길동"
           />
-        </div>
-
-        <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            지원 직분 <span className="text-red-500">*</span>
-          </label>
-          <div className="flex gap-3">
-            {(["장로", "안수집사", "권사"] as const).map((p) => (
-              <button
-                key={p}
-                type="button"
-                onClick={() => onChange({ position: p })}
-                className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                  form.position === p
-                    ? "bg-amber-600 text-white border-amber-600"
-                    : "bg-white text-gray-600 border-gray-300 hover:border-amber-400"
-                }`}
-              >
-                {p}
-              </button>
-            ))}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              지원 직분 <span className="text-red-500">*</span>
+            </label>
+            <div className="flex gap-2">
+              {(["장로", "안수집사", "권사"] as const).map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => onChange({ position: p })}
+                  className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                    form.position === p
+                      ? "bg-amber-600 text-white border-amber-600"
+                      : "bg-white text-gray-600 border-gray-300 hover:border-amber-400"
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
+      </div>
 
+      <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">생년월일</label>
           <input
@@ -1087,12 +1135,43 @@ function Step5({
 // ─────────────────────────────────────────────
 // MAIN APPLY PAGE
 // ─────────────────────────────────────────────
-export default function ApplyClient() {
+export default function ApplyPage() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<CandidateForm>(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string>("");
+  const [photoUrl, setPhotoUrl] = useState<string>("");
+
+  const compressImage = (file: File): Promise<string> =>
+    new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const maxW = 300;
+        const ratio = Math.min(maxW / img.width, 1);
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.82));
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+  const handlePhotoChange = async (file: File) => {
+    if (!file.name) {
+      setPhotoFile(null);
+      setPhotoPreview("");
+      setPhotoUrl("");
+      return;
+    }
+    setPhotoFile(file);
+    const compressed = await compressImage(file);
+    setPhotoPreview(compressed);
+    setPhotoUrl(compressed);
+  };
 
   const onChange = (partial: Partial<CandidateForm>) => {
     setForm((prev) => ({ ...prev, ...partial }));
@@ -1171,6 +1250,7 @@ export default function ApplyClient() {
         service_records: form.serviceRecords,
         checklist_score: score,
         status: "submitted",
+        ...(photoUrl ? { photo_url: photoUrl } : {}),
       });
 
       if (dbError) throw dbError;
@@ -1193,7 +1273,59 @@ export default function ApplyClient() {
             {form.name}님의 항존직 후보 지원서가 정상적으로 접수되었습니다.
           </p>
           <p className="text-2xl font-bold text-amber-600 mb-6">자기점검표 총점: {score}점</p>
-          <a href="/" className="block bg-amber-600 text-white py-3 rounded-xl font-semibold hover:bg-amber-700 transition-colors">
+          <button
+            onClick={() =>
+              printCandidatePDF({
+                name: form.name,
+                position: form.position,
+                birthDate: form.birthDate,
+                churchRegisterDate: form.churchRegisterDate,
+                baptismDate: form.baptismDate,
+                baptismChurch: form.baptismChurch,
+                officiantPastor: form.officiantPastor,
+                ordinationDate: form.ordinationDate,
+                ordinationChurch: form.ordinationChurch,
+                phone: form.phone,
+                email: form.email,
+                address: form.address,
+                familyMembers: form.familyMembers,
+                careerHistory: form.careerHistory,
+                worshipSundayMain: form.worshipSundayMain,
+                worshipSundayDay: form.worshipSundayDay,
+                worshipWednesday: form.worshipWednesday,
+                worshipFriday: form.worshipFriday,
+                worshipMission: form.worshipMission,
+                dawnPrayerWeekly: form.dawnPrayerWeekly,
+                tithe: form.tithe,
+                evangelismCount: form.evangelismCount,
+                q1SundayWorship: form.q1SundayWorship,
+                q2EveningWorship: form.q2EveningWorship,
+                q2EveningWorshipReason: form.q2EveningWorshipReason,
+                q3WednesdayPrayer: form.q3WednesdayPrayer,
+                q3WednesdayPrayerReason: form.q3WednesdayPrayerReason,
+                q4FridayPrayer: form.q4FridayPrayer,
+                q4FridayPrayerReason: form.q4FridayPrayerReason,
+                q5DawnPrayer: form.q5DawnPrayer,
+                q5DawnPrayerReason: form.q5DawnPrayerReason,
+                q6SpecialMeeting: form.q6SpecialMeeting,
+                q7SpiritBaptism: form.q7SpiritBaptism,
+                q7SpiritEvidence: form.q7SpiritEvidence,
+                q8AlcoholResolved: form.q8AlcoholResolved,
+                q9Tithe: form.q9Tithe,
+                q10Thanksgiving: form.q10Thanksgiving,
+                q11SeasonalOffering: form.q11SeasonalOffering,
+                q12FamilyFaith: form.q12FamilyFaith,
+                q13MinistryCooperation: form.q13MinistryCooperation,
+                serviceRecords: form.serviceRecords,
+                checklistScore: score,
+                photoUrl: photoUrl || undefined,
+              })
+            }
+            className="w-full mb-3 py-3 rounded-xl border border-amber-500 text-amber-700 font-semibold hover:bg-amber-50 transition-colors"
+          >
+            지원서 PDF 저장
+          </button>
+          <a href="/" className="block w-full text-center bg-amber-600 text-white py-3 rounded-xl font-semibold hover:bg-amber-700 transition-colors">
             처음으로 돌아가기
           </a>
         </div>
@@ -1213,7 +1345,7 @@ export default function ApplyClient() {
         <StepIndicator step={step} />
 
         <div className="bg-white rounded-2xl shadow-md p-6 mb-4">
-          {step === 1 && <Step1 form={form} onChange={onChange} />}
+          {step === 1 && <Step1 form={form} onChange={onChange} photoPreview={photoPreview} onPhotoChange={handlePhotoChange} />}
           {step === 2 && <Step2 form={form} onChange={onChange} />}
           {step === 3 && <Step3 form={form} onChange={onChange} />}
           {step === 4 && <Step4 form={form} onChange={onChange} />}
