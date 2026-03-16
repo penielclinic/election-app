@@ -35,6 +35,30 @@ const initialForm: RecommendForm = {
   recommend_reason: "",
 };
 
+const Label = ({ children }: { children: React.ReactNode }) => (
+  <label className="block text-xs font-semibold text-gray-600 mb-1">{children}</label>
+);
+
+const Input = ({
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  type?: string;
+}) => (
+  <input
+    type={type}
+    value={value}
+    onChange={(e) => onChange(e.target.value)}
+    placeholder={placeholder}
+    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+  />
+);
+
 export default function RecommendClient() {
   const [form, setForm] = useState<RecommendForm>(initialForm);
   const [submitted, setSubmitted] = useState(false);
@@ -116,30 +140,6 @@ export default function RecommendClient() {
       </main>
     );
   }
-
-  const Label = ({ children }: { children: React.ReactNode }) => (
-    <label className="block text-xs font-semibold text-gray-600 mb-1">{children}</label>
-  );
-
-  const Input = ({
-    value,
-    onChange,
-    placeholder,
-    type = "text",
-  }: {
-    value: string;
-    onChange: (v: string) => void;
-    placeholder?: string;
-    type?: string;
-  }) => (
-    <input
-      type={type}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-    />
-  );
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-gray-50">
