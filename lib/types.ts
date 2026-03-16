@@ -1,4 +1,4 @@
-export type Position = "장로" | "안수집사" | "권사";
+export type Position = "장로" | "안수집사" | "권사" | "서리집사";
 export type WorshipGrade = "A" | "B" | "C" | "D" | "E" | "";
 
 export interface FamilyMember {

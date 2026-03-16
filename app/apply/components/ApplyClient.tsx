@@ -188,10 +188,10 @@ function Step1({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              지원 직분 <span className="text-red-500">*</span>
+              지원 직분
             </label>
             <div className="flex gap-2">
-              {(["장로", "안수집사", "권사"] as const).map((p) => (
+              {(["장로", "안수집사", "권사", "서리집사"] as const).map((p) => (
                 <button
                   key={p}
                   type="button"
@@ -1266,7 +1266,6 @@ export default function ApplyPage() {
   const validateStep = (): string => {
     if (step === 1) {
       if (!form.name.trim()) return "성명을 입력해 주세요.";
-      if (!form.position) return "지원 직분을 선택해 주세요.";
       if (!form.phone.trim()) return "휴대폰 번호를 입력해 주세요.";
     }
     return "";
