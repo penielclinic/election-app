@@ -1,4 +1,5 @@
 import Link from "next/link";
+import QualificationAccordion from "./components/QualificationAccordion";
 
 export default function Home() {
   return (
@@ -37,9 +38,8 @@ export default function Home() {
 
           <div className="flex gap-3">
             <span className="font-bold text-amber-700 whitespace-nowrap">3.</span>
-            <div>
-              <span className="font-semibold">항존직 입후보 자격요건</span>
-              <p className="mt-0.5 text-gray-500">별지 참조</p>
+            <div className="w-full">
+              <QualificationAccordion />
             </div>
           </div>
 
