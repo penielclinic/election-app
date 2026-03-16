@@ -21,6 +21,9 @@ interface RecommendForm {
   recommender_name: string;
   recommender_phone: string;
   recommender_relationship: string;
+  faith_worship_attendance: string;
+  faith_service_history: string;
+  faith_service_department: string;
   recommend_reason: string;
 }
 
@@ -32,6 +35,9 @@ const initialForm: RecommendForm = {
   recommender_name: "",
   recommender_phone: "",
   recommender_relationship: "",
+  faith_worship_attendance: "",
+  faith_service_history: "",
+  faith_service_department: "",
   recommend_reason: "",
 };
 
@@ -101,6 +107,9 @@ export default function RecommendClient() {
       recommender_name: form.recommender_name.trim(),
       recommender_phone: form.recommender_phone.trim(),
       recommender_relationship: form.recommender_relationship.trim(),
+      faith_worship_attendance: form.faith_worship_attendance.trim(),
+      faith_service_history: form.faith_service_history.trim(),
+      faith_service_department: form.faith_service_department.trim(),
       recommend_reason: form.recommend_reason.trim(),
       status: "submitted",
     });
@@ -256,6 +265,52 @@ export default function RecommendClient() {
                 placeholder="예: 같은 구역"
               />
             </div>
+          </div>
+
+          {/* 구분선 */}
+          <div className="border-t border-gray-100 pt-2">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">후보자 신앙생활</p>
+            <p className="text-xs text-gray-400 mb-3" style={{ wordBreak: "keep-all" }}>
+              추천인이 관찰한 후보자의 신앙생활에 대해 의견을 작성해주세요.
+            </p>
+          </div>
+
+          <div>
+            <Label>예배출석 (주일예배)</Label>
+            <textarea
+              value={form.faith_worship_attendance}
+              onChange={(e) => set("faith_worship_attendance", e.target.value)}
+              placeholder="주일예배 출석 상황에 대한 의견을 작성해주세요."
+              rows={2}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+            />
+          </div>
+
+          <div>
+            <Label>봉사이력 (본교회)</Label>
+            <textarea
+              value={form.faith_service_history}
+              onChange={(e) => set("faith_service_history", e.target.value)}
+              placeholder="본교회에서의 봉사 이력에 대한 의견을 작성해주세요."
+              rows={2}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+            />
+          </div>
+
+          <div>
+            <Label>봉사부서 (현재)</Label>
+            <textarea
+              value={form.faith_service_department}
+              onChange={(e) => set("faith_service_department", e.target.value)}
+              placeholder="현재 봉사하고 있는 부서에 대한 의견을 작성해주세요."
+              rows={2}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+            />
+          </div>
+
+          {/* 구분선 */}
+          <div className="border-t border-gray-100 pt-2">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">추천 사유</p>
           </div>
 
           <div>

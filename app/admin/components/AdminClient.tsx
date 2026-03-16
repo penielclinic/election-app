@@ -21,6 +21,9 @@ interface RawRecommendation {
   recommender_name: string;
   recommender_phone: string;
   recommender_relationship: string;
+  faith_worship_attendance: string;
+  faith_service_history: string;
+  faith_service_department: string;
   recommend_reason: string;
   status: string;
 }
@@ -105,6 +108,22 @@ function RecommendDetailModal({
               <div key={label} className="flex gap-2 py-1 border-b border-gray-50">
                 <span className="text-gray-500 w-24 shrink-0 whitespace-nowrap">{label}</span>
                 <span className="text-gray-800">{val || "-"}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mb-4">
+            <p className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-2 border-b border-amber-100 pb-1">후보자 신앙생활</p>
+            {[
+              ["예배출석 (주일예배)", rec.faith_worship_attendance],
+              ["봉사이력 (본교회)", rec.faith_service_history],
+              ["봉사부서 (현재)", rec.faith_service_department],
+            ].map(([label, val]) => (
+              <div key={label} className="mb-3">
+                <p className="text-xs text-gray-500 font-medium mb-1">{label}</p>
+                <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed bg-gray-50 rounded-lg px-3 py-2" style={{ wordBreak: "keep-all" }}>
+                  {val || "-"}
+                </p>
               </div>
             ))}
           </div>

@@ -80,6 +80,9 @@ create table if not exists election_recommendations (
   recommender_name text not null,
   recommender_phone text not null,
   recommender_relationship text,
+  faith_worship_attendance text,   -- 예배출석 (주일예배)
+  faith_service_history text,      -- 봉사이력 (본교회)
+  faith_service_department text,   -- 봉사부서 (현재)
   recommend_reason text not null,
 
   status text default 'submitted'
