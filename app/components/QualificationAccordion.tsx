@@ -10,9 +10,10 @@ export default function QualificationAccordion() {
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center gap-1 font-semibold text-left hover:text-amber-700 transition-colors"
+        style={{ wordBreak: "keep-all" }}
       >
-        항존직 입후보 자격요건
-        <span className="text-amber-600 text-xs">{open ? "▲" : "▼"}</span>
+        항존직 입후보 자격요건 및 추천서 작성 유의사항
+        <span className="text-amber-600 text-xs ml-1 shrink-0">{open ? "▲" : "▼"}</span>
       </button>
 
       {open && (

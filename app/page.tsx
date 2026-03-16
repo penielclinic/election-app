@@ -86,29 +86,32 @@ export default function Home() {
           해운대순복음교회 선거관리위원회
         </p>
 
-        {/* 지원 버튼 */}
-        <Link
-          href="/apply"
-          className="block w-full text-center bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 rounded-xl transition-colors"
-        >
-          온라인 후보 지원하기
-        </Link>
+        {/* 버튼 영역 */}
+        <div className="space-y-3">
+          {/* 지원 버튼 */}
+          <Link
+            href="/apply"
+            className="flex items-center justify-center gap-2 w-full text-center bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-bold py-4 rounded-2xl shadow-lg shadow-amber-200 transition-all hover:shadow-amber-300 hover:-translate-y-0.5"
+          >
+            <span className="text-base">✏️</span>
+            <span>온라인 후보 지원하기</span>
+          </Link>
+          <p className="text-xs text-center text-gray-400" style={{ wordBreak: "keep-all" }}>
+            지원 신청서와 자기점검표를 온라인으로 작성하고 제출합니다.
+          </p>
 
-        <p className="text-xs text-center text-gray-400 mt-3" style={{ wordBreak: "keep-all" }}>
-          지원 신청서와 자기점검표를 온라인으로 작성하고 제출합니다.
-        </p>
-
-        {/* 추천서 버튼 */}
-        <Link
-          href="/recommend"
-          className="block w-full text-center mt-3 bg-white border-2 border-amber-500 hover:bg-amber-50 text-amber-700 font-semibold py-3 rounded-xl transition-colors"
-        >
-          후보자 추천서 제출하기
-        </Link>
-
-        <p className="text-xs text-center text-gray-400 mt-2" style={{ wordBreak: "keep-all" }}>
-          장로 · 안수집사 · 권사 후보를 온라인으로 추천하실 수 있습니다.
-        </p>
+          {/* 추천서 버튼 */}
+          <Link
+            href="/recommend"
+            className="flex items-center justify-center gap-2 w-full text-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 border-2 border-amber-500 text-amber-800 font-bold py-4 rounded-2xl shadow-md shadow-amber-100 transition-all hover:shadow-amber-200 hover:-translate-y-0.5"
+          >
+            <span className="text-base">📋</span>
+            <span>후보자 추천서 제출하기</span>
+          </Link>
+          <p className="text-xs text-center text-gray-400" style={{ wordBreak: "keep-all" }}>
+            장로 · 안수집사 · 권사 후보를 온라인으로 추천하실 수 있습니다.
+          </p>
+        </div>
       </div>
 
       <div className="mt-4">
